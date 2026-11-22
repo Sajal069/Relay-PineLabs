@@ -4,7 +4,22 @@ Relay is a working demo of how an Indian payments company could onboard a mercha
 
 PAN, GST, bank verification, and merchant ID creation use simulators. The app uses Next.js, TypeScript, Tailwind CSS, and SQLite. AI document extraction is available through OpenRouter or Ollama.
 
-## Run locally
+## Run the submission
+
+Use Node.js 22.13 or later.
+
+```sh
+npm ci
+npm run review
+```
+
+Open [Relay on localhost](http://127.0.0.1:3000/). Choose **Owner** and sign in with ID `relay-review-owner` and password `relay-review-demo`. For the merchant flow, create a test account using **Merchant**. You can try **Use sample documents** right away.
+
+The submission intentionally includes `.env.review` with an OpenRouter key so reviewers can try AI extraction without creating their own API key. Relay uses free models for this demo. The key will be revoked after the review. If the free quota runs out or the key has been revoked, **Use sample application** still lets you complete the full verification walkthrough.
+
+The first review launch copies the included SQLite snapshot to `data/relay-review-local.sqlite`. The snapshot contains earlier applications, verification history, and merchant IDs. It has no saved merchant logins or sessions. Test accounts and changes are saved in the local copy.
+
+## Run with your own settings
 
 1. Use Node.js 22.13 or later and run `npm ci`.
 2. Copy `.env.example` to `.env.local` if you do not already have one. On Windows PowerShell, use `Copy-Item .env.example .env.local`.
@@ -21,21 +36,11 @@ Choose **Owner** and use the credentials you set to open the manager dashboard. 
 
 For a production build, run `npm run build` and then `npm start`. Both the dev and production commands start the callback worker alongside the web app. Restart Relay after changing environment settings.
 
-## Submission files
-
-The SQLite snapshot at `data/relay-review.sqlite` is included intentionally so reviewers can open a populated dashboard and inspect earlier cases. On first use, copy it to a local working file so your test accounts and changes stay in that copy. On Windows PowerShell, run `Copy-Item data/relay-review.sqlite data/relay-review-local.sqlite`. On macOS or Linux, run `cp data/relay-review.sqlite data/relay-review-local.sqlite`. Then add this line to `.env.local` before starting Relay.
-
-```dotenv
-RELAY_DB_PATH=data/relay-review-local.sqlite
-```
-
-The snapshot keeps the applications, verification attempts, callback history, and merchant IDs. It has no saved merchant logins or sessions. Set your own owner credentials in `.env.local` for the dashboard and create a fresh merchant account for submission and inbox testing. If you leave `RELAY_DB_PATH` unset, Relay uses `data/relay.sqlite` and fills a fresh database with fictional demo cases on first use.
-
-The environment template `.env.example` is included for the submission check. If a separate environment file with a review-only API key is supplied, its inclusion is intentional and lets the evaluator try AI extraction. Copy those values into the local `.env.local` file. Active API keys and owner passwords belong in the private environment file. The sample application and full verification walkthrough work without an AI key.
+If you leave `RELAY_DB_PATH` unset when using `npm run dev`, Relay uses `data/relay.sqlite` and fills a fresh database with fictional demo cases on first use.
 
 ## Try the main workflow
 
-Use a fresh database for this walkthrough if the submitted snapshot already contains Monsoon Paperworks. Set `RELAY_DB_PATH=data/relay-walkthrough.sqlite` and restart Relay. Keep GST mandatory for this demo.
+Use a fresh database for this walkthrough if the submitted snapshot already contains Monsoon Paperworks. Stop the app, then restart with a new database filename. In PowerShell, run `$env:RELAY_DB_PATH = "data/relay-walkthrough.sqlite"; npm run review`. On macOS or Linux, run `RELAY_DB_PATH=data/relay-walkthrough.sqlite npm run review`. Keep GST mandatory for this demo.
 
 1. Sign in as a merchant. Open **New application**, choose **Use sample application**, and click **Submit application**. This loads a fictional merchant, Monsoon Paperworks, with a legal name that deliberately differs from the GST record.
 2. Sign out, sign in as **Owner**, and open the application from the dashboard. Wait for the callbacks. PAN and bank should pass, and GST should send the application to **Needs review**. Open the GST check to compare the submitted, extracted, and simulated registry values.

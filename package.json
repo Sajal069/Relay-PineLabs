@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "node scripts/run.mjs dev",
+    "review": "node --env-file=.env.review scripts/review.mjs dev",
     "build": "next build",
     "start": "node scripts/run.mjs start",
     "typecheck": "tsc --noEmit",

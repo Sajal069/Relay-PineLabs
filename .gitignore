@@ -6,3 +6,4 @@
 *.tsbuildinfo
 .env*
 !.env.example
+!.env.review
